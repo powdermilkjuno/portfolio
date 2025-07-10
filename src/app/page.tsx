@@ -3,7 +3,7 @@
 import { useState, useRef, useEffect } from 'react';
 import "./globals.css";
 import { FaExclamationTriangle } from "react-icons/fa";
-import { CursorArrowIcon } from '@radix-ui/react-icons';
+import { CursorArrowIcon, Link1Icon } from '@radix-ui/react-icons';
 import localFont from 'next/font/local';
 import BottomNavigation from './components/BottomNavigation';
 import CustomCursor from './components/CustomCursor';
@@ -154,7 +154,6 @@ export default function Home() {
           >
             <div className="flex flex-col items-center justify-center">
               <div className="flex items-center mt-4">
-                <FaExclamationTriangle className="h-14 w-14 mr-2 text-blue-600" />
                 <h1 className={`text-5xl ${customFont.className} text-blue-600`}>Welcome to My Portfolio!</h1>
               </div>
                                             <div className="text-center mb-12">
@@ -452,7 +451,17 @@ export default function Home() {
                       <div className="relative z-10 h-full flex flex-col">
                         {!flippedCards.has('pallit') ? (
                           <>
-                            <h3 className="text-xl font-bold mb-4 text-blue-400 font-mono">Pallit</h3>
+                            <h3 className="flex items-center justify-start text-xl font-bold mb-4 text-blue-400 font-mono hover:text-blue-300 transition-colors cursor-pointer" onClick={(e) => {
+                              e.stopPropagation();
+                              if (audioRef.current) {
+                                audioRef.current.currentTime = 0;
+                                audioRef.current.play().catch(error => console.log('Audio play failed:', error));
+                              }
+                              window.open('https://github.com/elizabethprettosotelo/pallit', '_blank', 'noopener,noreferrer');
+                            }}>
+                              Pallit
+                              <Link1Icon className="ml-2 w-5 h-5" />
+                            </h3>
                             <p className="text-gray-300 mb-4 text-sm flex-1">A collaborative palette creation and sharing platform for designers and artists. This project would assist with frontend development skills.</p>
                             <div className="flex flex-wrap gap-2 mt-auto">
                               <span className="px-2 py-1 bg-blue-600 text-white text-xs rounded font-mono">React</span>
@@ -506,7 +515,17 @@ export default function Home() {
                       <div className="relative z-10 h-full flex flex-col">
                         {!flippedCards.has('taskflow') ? (
                           <>
-                            <h3 className="text-xl font-bold mb-4 text-blue-400 font-mono">Last Meal Protocol Club</h3>
+                            <h3 className="flex items-center justify-start text-xl font-bold mb-4 text-blue-400 font-mono hover:text-blue-300 transition-colors cursor-pointer" onClick={(e) => {
+                              e.stopPropagation();
+                              if (audioRef.current) {
+                                audioRef.current.currentTime = 0;
+                                audioRef.current.play().catch(error => console.log('Audio play failed:', error));
+                              }
+                              window.open('https://github.com/powdermilkjuno/habit-tracker/', '_blank', 'noopener,noreferrer');
+                            }}>
+                              Last Meal Protocol
+                              <Link1Icon className="ml-2 w-5 h-5" />
+                            </h3>
                             <p className="text-gray-300 mb-4 text-sm flex-1">A tamagotchi-style calorie counter with social integration and friend features. Track your meals, maintain your virtual pet, and connect with friends.</p>
                             <div className="flex flex-wrap gap-2 mt-auto">
                               <span className="px-2 py-1 bg-blue-600 text-white text-xs rounded font-mono">Next.js</span>
@@ -561,11 +580,21 @@ export default function Home() {
                       <div className="relative z-10 h-full flex flex-col">
                         {!flippedCards.has('portfolio') ? (
                           <>
-                            <h3 className="text-xl font-bold mb-4 text-blue-400 font-mono">Portfolio Site</h3>
+                            <h3 className="flex items-center justify-start text-xl font-bold mb-4 text-blue-400 font-mono hover:text-blue-300 transition-colors cursor-pointer" onClick={(e) => {
+                              e.stopPropagation();
+                              if (audioRef.current) {
+                                audioRef.current.currentTime = 0;
+                                audioRef.current.play().catch(error => console.log('Audio play failed:', error));
+                              }
+                              window.open('https://github.com/powdermilkjuno/portfolio', '_blank', 'noopener,noreferrer');
+                            }}>
+                              Portfolio Site
+                              <Link1Icon className="ml-2 w-5 h-5" />
+                            </h3>
                             <p className="text-gray-300 mb-4 text-sm flex-1">This very website! Built with Next.js and inspired by the Wii&apos;s design language and the nostalgic technology of the 2000s era.</p>
                             <div className="flex flex-wrap gap-2 mt-auto">
-                              <span className="px-2 py-1 bg-blue-600 text-white text-xs rounded font-mono">Next.js</span>
-                              <span className="px-2 py-1 bg-blue-700 text-white text-xs rounded font-mono">Tailwind</span>
+                              <span className="px-2 py-1 bg-blue-700 text-white text-xs rounded font-mono">Next.js</span>
+                              <span className="px-2 py-1 bg-blue-600 text-white text-xs rounded font-mono">Tailwind</span>
                               <span className="px-2 py-1 bg-blue-500 text-white text-xs rounded font-mono">Framer Motion</span>
                             </div>
                           </>
@@ -615,7 +644,17 @@ export default function Home() {
                       <div className="relative z-10 h-full flex flex-col">
                         {!flippedCards.has('codeconnections') ? (
                           <>
-                            <h3 className="text-xl font-bold mb-4 text-blue-400 font-mono">Code Connections</h3>
+                            <h3 className="flex items-center justify-start text-xl font-bold mb-4 text-blue-400 font-mono hover:text-blue-300 transition-colors cursor-pointer" onClick={(e) => {
+                              e.stopPropagation();
+                              if (audioRef.current) {
+                                audioRef.current.currentTime = 0;
+                                audioRef.current.play().catch(error => console.log('Audio play failed:', error));
+                              }
+                              window.open('https://github.com/HareshP31/Code_Connections', '_blank', 'noopener,noreferrer');
+                            }}>
+                              Code Connections
+                              <Link1Icon className="ml-2 w-5 h-5" />
+                            </h3>
                             <p className="text-gray-300 mb-4 text-sm flex-1">A social media app for Florida programmers to form teams and ask questions about hackathons. Connect with local developers and build amazing projects together.</p>
                             <div className="flex flex-wrap gap-2 mt-auto">
                               <span className="px-2 py-1 bg-blue-600 text-white text-xs rounded font-mono">React</span>
