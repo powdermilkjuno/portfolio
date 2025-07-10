@@ -1,24 +1,36 @@
 'use client' 
 
-import { usePathname } from 'next/navigation'
+
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { Menu, X } from 'lucide-react'
 
 export default function NavBar() {
-    const [path, setPath] = useState<string | null>(null)
-    const pathname = usePathname()
+    const [currentHash, setCurrentHash] = useState<string>('')
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
 
     useEffect(() => {
-        setPath(pathname)
-    }, [pathname])
+        const handleHashChange = () => {
+            setCurrentHash(window.location.hash)
+        }
+        
+        // Set initial hash
+        setCurrentHash(window.location.hash)
+        
+        // Listen for hash changes
+        window.addEventListener('hashchange', handleHashChange)
+        
+        return () => {
+            window.removeEventListener('hashchange', handleHashChange)
+        }
+    }, [])
 
     const links = [
-        { name: 'home', path: '/' },
-        { name: 'about', path: '/about' },
-        { name: 'projects', path: '/projects' },
-        { name: 'pieces', path: '/pieces' }
+        { name: 'welcome', path: '/#welcome' },
+        { name: 'about me', path: '/#about' },
+        { name: 'skills', path: '/#skills' },
+        { name: 'projects', path: '/#projects' },
+        { name: 'contact', path: '/#contact' }
     ]
 
     return (
@@ -31,7 +43,10 @@ export default function NavBar() {
                             key={link.path} 
                             href={link.path}
                             className={`text-sm font-medium capitalize transition-colors ${
-                                path === link.path ? 'text-foreground' : 'text-green-200 hover:text-blue-500'
+                                (link.path === '/#welcome' && (currentHash === '' || currentHash === '#welcome')) ||
+                                (link.path.startsWith('/#') && currentHash === link.path.substring(1))
+                                    ? 'text-foreground' 
+                                    : 'text-green-200 hover:text-blue-500'
                             }`}
                         >   
                             {link.name}
@@ -49,16 +64,19 @@ export default function NavBar() {
                 <div className="md:hidden absolute top-16 left-0 right-0 bg-white border-t shadow-md">
                     <div className="flex flex-col items-center py-4">
                         {links.map((link) => (
-                            <Link 
-                                key={link.path} 
-                                href={link.path}
-                                className={`py-3 text-lg font-medium capitalize ${
-                                    path === link.path ? 'text-blue-600' : 'text-gray-700'
-                                }`}
-                                onClick={() => setMobileMenuOpen(false)}
-                            >
-                                {link.name}
-                            </Link>
+                                                    <Link 
+                            key={link.path} 
+                            href={link.path}
+                            className={`py-3 text-lg font-medium capitalize ${
+                                (link.path === '/#welcome' && (currentHash === '' || currentHash === '#welcome')) ||
+                                (link.path.startsWith('/#') && currentHash === link.path.substring(1))
+                                    ? 'text-blue-600' 
+                                    : 'text-gray-700'
+                            }`}
+                            onClick={() => setMobileMenuOpen(false)}
+                        >
+                            {link.name}
+                        </Link>
                         ))}
                     </div>
                 </div>

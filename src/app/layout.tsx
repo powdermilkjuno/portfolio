@@ -13,8 +13,9 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Sebastian Garcia - Portfolio",
-  description: "Full Stack Developer Portfolio",
+  title: "Sebastian Garcia - Software Developer Portfolio", // Be more specific
+  description:
+    "The official portfolio for Sebastian Garcia, a full-stack software developer specializing in modern web technologies. View my projects and get in touch.", // Add keywords
   icons: {
     icon: "/owltuah.jpg", // This line sets the default favicon for browser tabs
     shortcut: "/owltuah.jpg", // Also for favicons, provides broader compatibility
