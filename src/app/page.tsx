@@ -7,6 +7,8 @@ import { CursorArrowIcon } from '@radix-ui/react-icons';
 import localFont from 'next/font/local';
 import AboutPhoto from './components/AboutPhoto';
 import BottomNavigation from './components/BottomNavigation';
+import ChannelGrid from './components/ChannelGrid';
+import CursorPicker from './components/CursorPicker';
 import OptimizedImage from './components/OptimizedImage';
 import ProjectChannel from './components/ProjectChannel';
 import SectionScroller from './components/SectionScroller';
@@ -181,39 +183,21 @@ export default function Home() {
         <div className="animate-fade-in pb-28">
           {/* Wii Menu — the channel grid */}
           <section id="welcome" className={sectionClass('welcome')}>
-            <h1 className={`text-4xl md:text-5xl ${customFont.className} text-center text-slate-700`}>
+            <h1 className={`text-4xl md:text-5xl ${customFont.className} text-center wii-heading`}>
               Welcome to My Portfolio!
             </h1>
             <p className="mt-3 text-sm text-slate-500">
-              Point at a channel to light it up, then click to tune in.
+              Point at a channel to light it up, click to tune in, or drag one to rearrange.
             </p>
 
-            <div className="mt-12 grid w-full max-w-5xl grid-cols-2 gap-5 sm:grid-cols-3 lg:grid-cols-4">
-              {NAV_CHANNELS.map((channel) => (
-                <div key={channel.id} className="aspect-[4/3]">
-                  <WiiChannel
-                    as="button"
-                    screenClassName="wii-channel__screen--light flex flex-col items-center justify-center p-4 text-center"
-                    onMouseEnter={() => playSound('hover')}
-                    onClick={() => goToSection(channel.id)}
-                  >
-                    <h3 className={`text-xl text-blue-600 ${customFont.className}`}>
-                      {channel.title}
-                    </h3>
-                    <p className="mt-1 text-xs text-slate-500">{channel.blurb}</p>
-                  </WiiChannel>
-                </div>
-              ))}
-
-              {/* Vacant slot, balancing the row on the widest layout */}
-              <div className="hidden lg:block">
-                <WiiChannel empty aria-hidden="true" />
-              </div>
-
-              {/* Everywhere else you can find me, on one wide channel */}
-              <div className="col-span-2 aspect-[8/3]">
+            <ChannelGrid
+              channels={NAV_CHANNELS}
+              titleClassName={customFont.className}
+              onOpen={goToSection}
+              wide={
+                /* Everywhere else you can find me, on one wide channel */
                 <WiiChannel screenClassName="wii-channel__screen--light flex flex-col items-center justify-center gap-3 p-4">
-                  <span className={`text-lg text-blue-600 ${customFont.className}`}>
+                  <span className={`text-lg wii-subheading ${customFont.className}`}>
                     Find Me Online
                   </span>
                   <div className="flex items-center gap-4">
@@ -232,12 +216,8 @@ export default function Home() {
                     ))}
                   </div>
                 </WiiChannel>
-              </div>
-
-              <div className="hidden lg:block">
-                <WiiChannel empty aria-hidden="true" />
-              </div>
-            </div>
+              }
+            />
 
             <SectionScroller
               targetId="about"
@@ -249,7 +229,7 @@ export default function Home() {
 
           {/* About */}
           <section id="about" className={sectionClass('about')}>
-            <h2 className={`text-4xl ${customFont.className} mb-10 text-slate-700`}>About Me</h2>
+            <h2 className={`text-4xl ${customFont.className} mb-10 wii-heading`}>About Me</h2>
 
             <div className="flex max-w-6xl flex-col items-center justify-center gap-14 lg:flex-row">
               <div className="relative">
@@ -275,7 +255,7 @@ export default function Home() {
                 className="max-w-lg"
                 screenClassName="wii-channel__screen--light wii-channel__screen--padded"
               >
-                <h3 className={`mb-5 text-2xl text-blue-600 ${customFont.className}`}>Who I Am</h3>
+                <h3 className={`mb-5 text-2xl wii-subheading ${customFont.className}`}>Who I Am</h3>
                 <div className="space-y-4 text-left text-slate-600">
                   <p>
                     Hi! I&apos;m Sebastian Garcia, a passionate full-stack developer with a love for
@@ -306,7 +286,7 @@ export default function Home() {
 
           {/* Skills */}
           <section id="skills" className={sectionClass('skills', 'wii-section-tint')}>
-            <h2 className={`text-4xl ${customFont.className} mb-10 text-slate-700`}>My Skills</h2>
+            <h2 className={`text-4xl ${customFont.className} mb-10 wii-heading`}>My Skills</h2>
 
             <div className="grid w-full max-w-6xl grid-cols-1 gap-7 md:grid-cols-2 lg:grid-cols-4">
               {SKILL_CHANNELS.map((skill) => (
@@ -314,7 +294,7 @@ export default function Home() {
                   key={skill.title}
                   screenClassName="wii-channel__screen--light wii-channel__screen--padded"
                 >
-                  <h3 className={`mb-4 text-2xl text-blue-600 ${customFont.className}`}>
+                  <h3 className={`mb-4 text-2xl wii-subheading ${customFont.className}`}>
                     {skill.title}
                   </h3>
                   <ul className="space-y-2 text-slate-600">
@@ -336,7 +316,7 @@ export default function Home() {
 
           {/* Projects */}
           <section id="projects" className={sectionClass('projects')}>
-            <h2 className={`text-4xl ${customFont.className} mb-3 text-slate-700`}>
+            <h2 className={`text-4xl ${customFont.className} mb-3 wii-heading`}>
               Featured Projects
             </h2>
             <p className="mb-10 text-sm text-slate-500">
@@ -363,14 +343,14 @@ export default function Home() {
 
           {/* Contact */}
           <section id="contact" className={sectionClass('contact', 'wii-section-tint')}>
-            <h2 className={`text-4xl ${customFont.className} mb-4 text-slate-700`}>Get In Touch</h2>
+            <h2 className={`text-4xl ${customFont.className} mb-4 wii-heading`}>Get In Touch</h2>
             <p className="mb-10 text-lg text-slate-600">
               I&apos;m always interested in new opportunities and exciting projects!
             </p>
 
             <div className="grid w-full max-w-3xl grid-cols-1 gap-8 md:grid-cols-2">
               <WiiChannel screenClassName="wii-channel__screen--light wii-channel__screen--padded">
-                <h3 className={`mb-4 text-xl text-blue-600 ${customFont.className}`}>Contact Info</h3>
+                <h3 className={`mb-4 text-xl wii-subheading ${customFont.className}`}>Contact Info</h3>
                 <div className="space-y-2 text-left text-slate-600">
                   <p className="flex items-center gap-2">
                     <MailIcon className="h-5 w-5 shrink-0 text-blue-500" />
@@ -390,7 +370,7 @@ export default function Home() {
               </WiiChannel>
 
               <WiiChannel screenClassName="wii-channel__screen--light wii-channel__screen--padded">
-                <h3 className={`mb-4 text-xl text-blue-600 ${customFont.className}`}>Social Links</h3>
+                <h3 className={`mb-4 text-xl wii-subheading ${customFont.className}`}>Social Links</h3>
                 <div className="space-y-3 text-left">
                   {SOCIAL_LINKS.map(({ label, href, Icon }) => (
                     <a
@@ -399,7 +379,7 @@ export default function Home() {
                       target="_blank"
                       rel="noopener noreferrer"
                       onClick={() => playSound('select')}
-                      className="flex items-center gap-2 text-slate-600 transition-colors hover:text-blue-600"
+                      className="flex items-center gap-2 text-slate-600 transition-colors hover:wii-subheading"
                     >
                       <Icon className="h-5 w-5 shrink-0 text-blue-500" />
                       {label}
@@ -411,6 +391,8 @@ export default function Home() {
           </section>
         </div>
       )}
+
+      {showNewContent && <CursorPicker />}
 
       {showNewContent && <BottomNavigation isVisible={isNavbarVisible} />}
     </>

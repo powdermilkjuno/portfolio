@@ -42,17 +42,6 @@ async function buildImages() {
 
     console.log(`image  -> ${job.output}`);
   }
-
-  // A native CSS cursor costs nothing to move; a JS-tracked element repaints
-  // on every pointer event, which is what made scrolling feel heavy.
-  const pointer = path.join(publicDir, 'PointerP1.svg');
-  if (existsSync(pointer)) {
-    await sharp(pointer, { density: 300 })
-      .resize(64, 64, { fit: 'contain', background: { r: 0, g: 0, b: 0, alpha: 0 } })
-      .png()
-      .toFile(path.join(publicDir, 'wii-pointer.png'));
-    console.log('cursor -> wii-pointer.png');
-  }
 }
 
 /**

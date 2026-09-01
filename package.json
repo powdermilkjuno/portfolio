@@ -7,7 +7,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "optimize-media": "node scripts/optimize-media.mjs"
+    "optimize-media": "node scripts/optimize-media.mjs",
+    "build-cursors": "node scripts/build-cursors.mjs"
   },
   "dependencies": {
     "@radix-ui/react-icons": "^1.3.2",

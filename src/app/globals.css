@@ -27,12 +27,44 @@ body {
 }
 
 /* The Wii hand as a real cursor. Drawn by the compositor at no cost, unlike a
-   JS-positioned element that repaints on every pointer move. */
+   JS-positioned element that repaints on every pointer move.
+   The picker swaps players by setting data-cursor on <html>. */
+:root {
+  --wii-cursor: url('/wii-pointer-p1.png') 25 6;
+}
+
+html[data-cursor='2'] {
+  --wii-cursor: url('/wii-pointer-p2.png') 25 6;
+}
+
+html[data-cursor='3'] {
+  --wii-cursor: url('/wii-pointer-p3.png') 25 6;
+}
+
+html[data-cursor='4'] {
+  --wii-cursor: url('/wii-pointer-p4.png') 25 6;
+}
+
 @media (pointer: fine) {
   body,
   body * {
-    cursor: url('/wii-pointer.png') 24 8, auto;
+    cursor: var(--wii-cursor), auto;
   }
+}
+
+/* ─────────────────────────────────────────────
+   Section headings — the Wii Menu's embossed blue
+   ───────────────────────────────────────────── */
+.wii-heading {
+  color: #1668ab;
+  text-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.95),
+    0 2px 4px rgba(25, 60, 110, 0.16);
+}
+
+.wii-subheading {
+  color: #2f8fd0;
+  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.9);
 }
 
 @keyframes fadeIn {
@@ -182,7 +214,7 @@ body {
 @media (pointer: fine) {
   .wii-channel--interactive,
   .wii-scroller {
-    cursor: url('/wii-pointer.png') 24 8, pointer;
+    cursor: var(--wii-cursor), pointer;
   }
 }
 
@@ -278,6 +310,33 @@ body {
 
 .wii-channel__screen--padded {
   padding: 1.25rem;
+}
+
+/* ─────────────────────────────────────────────
+   Channel dragging — rearranging the menu grid
+   ───────────────────────────────────────────── */
+.wii-slot {
+  transition:
+    opacity 0.18s ease,
+    transform 0.18s ease;
+}
+
+.wii-slot--dragging {
+  opacity: 0.35;
+  transform: scale(0.96);
+}
+
+/* Marks the slot the channel would land in. */
+.wii-slot--over {
+  outline: 3px dashed var(--wii-blue);
+  outline-offset: 5px;
+  border-radius: 1.7rem;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .wii-slot {
+    transition: none;
+  }
 }
 
 /* ─────────────────────────────────────────────
@@ -533,4 +592,137 @@ body {
 .wii-tip-anchor:focus-within .wii-tip {
   opacity: 1;
   transform: translateX(-50%) translateY(0);
+}
+
+/* ─────────────────────────────────────────────
+   Pointer picker — the Wii's controller settings tray
+   ───────────────────────────────────────────── */
+.wii-tray {
+  position: fixed;
+  top: 50%;
+  right: 0;
+  z-index: 55;
+  display: flex;
+  align-items: center;
+  transform: translateY(-50%);
+}
+
+.wii-tray__handle {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.85rem 0.5rem;
+  border: none;
+  border-radius: 0.9rem 0 0 0.9rem;
+  background: linear-gradient(180deg, #fbfcfd 0%, #e7ebf1 45%, #cdd4de 100%);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.95),
+    0 0 0 1px rgba(120, 140, 170, 0.3),
+    -3px 0 10px rgba(25, 45, 85, 0.18);
+  color: #3f4c66;
+  transition: transform 0.2s ease;
+}
+
+.wii-tray__handle:hover,
+.wii-tray__handle:focus-visible {
+  transform: translateX(-2px);
+  outline: none;
+}
+
+.wii-tray__handle-label {
+  font-size: 0.6rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  writing-mode: vertical-rl;
+  text-orientation: mixed;
+}
+
+.wii-tray__panel {
+  overflow: hidden;
+  width: 0;
+  opacity: 0;
+  border-radius: 1.1rem 0 0 1.1rem;
+  background: linear-gradient(180deg, #fdfdfe 0%, #eef1f6 40%, #dbe1e9 100%);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.95),
+    0 0 0 1px rgba(120, 140, 170, 0.3),
+    -4px 0 16px rgba(25, 45, 85, 0.22);
+  transition:
+    width 0.28s cubic-bezier(0.22, 0.68, 0.28, 1),
+    opacity 0.2s ease;
+}
+
+.wii-tray.is-open .wii-tray__panel {
+  width: 10.5rem;
+  opacity: 1;
+}
+
+.wii-tray__title {
+  padding: 0.7rem 0.75rem 0.5rem;
+  text-align: center;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: #5b6883;
+}
+
+.wii-tray__list {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0.5rem;
+  padding: 0 0.75rem 0.85rem;
+}
+
+.wii-tray__option {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.2rem;
+  padding: 0.45rem 0.2rem 0.3rem;
+  border: none;
+  border-radius: 0.7rem;
+  background: linear-gradient(180deg, #ffffff 0%, #eef2f7 60%, #dde3ec 100%);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.95),
+    0 0 0 1px rgba(255, 255, 255, 0.6),
+    0 2px 5px rgba(30, 50, 90, 0.16);
+  color: #55627d;
+  font-size: 0.62rem;
+  font-weight: 700;
+  transition:
+    transform 0.18s ease,
+    box-shadow 0.18s ease;
+}
+
+.wii-tray__option:hover,
+.wii-tray__option:focus-visible {
+  transform: translateY(-2px);
+  outline: none;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.95),
+    0 0 0 2px var(--wii-blue-glow),
+    0 4px 9px rgba(30, 60, 110, 0.2);
+}
+
+.wii-tray__option.is-active {
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.95),
+    0 0 0 3px var(--wii-blue),
+    0 4px 9px rgba(30, 60, 110, 0.22);
+  color: #1668ab;
+}
+
+.wii-tray__option img {
+  width: 30px;
+  height: 30px;
+  image-rendering: auto;
+}
+
+/* Touch devices have no cursor to restyle, so the tray is pointless there.
+   Keyed off input type rather than width so a narrow desktop window keeps it. */
+@media (pointer: coarse) {
+  .wii-tray {
+    display: none;
+  }
 }
