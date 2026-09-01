@@ -25,15 +25,17 @@ function ChannelArt({ media }: { media: ProjectMedia }) {
     );
   }
 
-  if (media.fit === 'cover') {
+  if (media.fit === 'cover' || media.fit === 'contain') {
     return (
-      <OptimizedImage
+      <img
         src={media.src}
         alt={media.alt}
-        fill
-        sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
         draggable={false}
-        className="object-cover"
+        className={
+          media.fit === 'contain'
+            ? 'h-full w-full object-contain'
+            : 'h-full w-full object-cover object-top'
+        }
       />
     );
   }
@@ -54,6 +56,7 @@ function ChannelArt({ media }: { media: ProjectMedia }) {
 export default function ProjectChannel({ project, onTune }: ProjectChannelProps) {
   const [pinned, setPinned] = useState(false);
   const { media, logo } = project;
+  const fillsFrame = media.kind === 'video' || (media.kind === 'image' && Boolean(media.fit));
 
   return (
     <div
@@ -66,9 +69,19 @@ export default function ProjectChannel({ project, onTune }: ProjectChannelProps)
         <div className="wii-flip__face">
           <WiiChannel
             className="wii-channel--interactive"
-            screenClassName="wii-channel__screen--art flex flex-col"
+            screenClassName={`flex flex-col ${
+              media.kind === 'image' && media.fit === 'contain'
+                ? 'bg-[#0c0e14]'
+                : 'wii-channel__screen--art'
+            }`}
           >
-            <div className="relative flex flex-1 items-center justify-center overflow-hidden">
+            <div
+              className={
+                fillsFrame
+                  ? 'relative min-h-0 flex-1 overflow-hidden'
+                  : 'relative flex min-h-0 flex-1 items-center justify-center overflow-hidden'
+              }
+            >
               <ChannelArt media={media} />
             </div>
 

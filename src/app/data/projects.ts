@@ -3,7 +3,7 @@ export type ProjectMedia =
       kind: 'image';
       src: string;
       alt: string;
-      /** Screenshots fill the channel; logos sit centred with room to breathe. */
+      /** How a screenshot sits in the channel. `contain` shows the whole image. */
       fit?: 'cover' | 'contain';
     }
   | { kind: 'video'; src: string; poster: string; alt: string };
@@ -42,9 +42,9 @@ export const projects: Project[] = [
     href: 'https://github.com/elizabethprettosotelo/pallit',
     media: {
       kind: 'image',
-      src: '/pallit-preview.jpg',
+      src: '/pallit-full.jpg',
       alt: 'The Pallit editor, showing a generated colour and font scheme',
-      fit: 'cover',
+      fit: 'contain',
     },
     logo: { src: '/pallitlogo.svg', width: 198, height: 67 },
   },
@@ -57,9 +57,9 @@ export const projects: Project[] = [
     href: 'https://github.com/powdermilkjuno/habit-tracker/',
     media: {
       kind: 'image',
-      src: '/lastmeal-preview.png',
+      src: '/lastmeal-full.png',
       alt: 'The Last Meal Protocol dashboard, showing a virtual pet beside a calorie tracker',
-      fit: 'cover',
+      fit: 'contain',
     },
   },
   {
