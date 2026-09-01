@@ -1,5 +1,11 @@
 export type ProjectMedia =
-  | { kind: 'image'; src: string; alt: string }
+  | {
+      kind: 'image';
+      src: string;
+      alt: string;
+      /** Screenshots fill the channel; logos sit centred with room to breathe. */
+      fit?: 'cover' | 'contain';
+    }
   | { kind: 'video'; src: string; poster: string; alt: string };
 
 export type Project = {
@@ -9,6 +15,8 @@ export type Project = {
   tags: string[];
   href?: string;
   media: ProjectMedia;
+  /** A wordmark shown wherever the title would be. Its alt text is the title. */
+  logo?: { src: string; width: number; height: number };
 };
 
 export const projects: Project[] = [
@@ -32,7 +40,13 @@ export const projects: Project[] = [
       'A collaborative palette creation and sharing platform for designers and artists. This project would assist with frontend development skills.',
     tags: ['React', 'Node.js', 'TypeScript'],
     href: 'https://github.com/elizabethprettosotelo/pallit',
-    media: { kind: 'image', src: '/pallitlogo.svg', alt: 'Pallit logo' },
+    media: {
+      kind: 'image',
+      src: '/pallit-preview.jpg',
+      alt: 'The Pallit editor, showing a generated colour and font scheme',
+      fit: 'cover',
+    },
+    logo: { src: '/pallitlogo.svg', width: 198, height: 67 },
   },
   {
     id: 'lastmeal',
@@ -41,7 +55,12 @@ export const projects: Project[] = [
       'A tamagotchi-style calorie counter with social integration and friend features. Track your meals, maintain your virtual pet, and connect with friends.',
     tags: ['Next.js', 'TypeScript', 'Supabase', 'shadcn'],
     href: 'https://github.com/powdermilkjuno/habit-tracker/',
-    media: { kind: 'image', src: '/egg.svg', alt: 'Last Meal Protocol logo' },
+    media: {
+      kind: 'image',
+      src: '/lastmeal-preview.png',
+      alt: 'The Last Meal Protocol dashboard, showing a virtual pet beside a calorie tracker',
+      fit: 'cover',
+    },
   },
   {
     id: 'portfolio',

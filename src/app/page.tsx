@@ -10,7 +10,7 @@ import BottomNavigation from './components/BottomNavigation';
 import ChannelGrid from './components/ChannelGrid';
 import CursorPicker from './components/CursorPicker';
 import OptimizedImage from './components/OptimizedImage';
-import ProjectChannel from './components/ProjectChannel';
+import ProjectGrid from './components/ProjectGrid';
 import SectionScroller from './components/SectionScroller';
 import WiiChannel from './components/WiiChannel';
 import { projects } from './data/projects';
@@ -158,13 +158,13 @@ export default function Home() {
             <div className="mt-16 text-center">
               <p className="text-sm text-gray-500">Share the website link:</p>
               <a
-                href="https://sebastiangarcia.dev"
+                href="https://sebagarcia.dev"
                 className="text-2xl font-medium text-white transition-colors hover:text-blue-400"
                 target="_blank"
                 rel="noopener noreferrer"
                 onClick={(e) => e.stopPropagation()}
               >
-                sebastiangarcia.dev
+                sebagarcia.dev
               </a>
             </div>
 
@@ -320,18 +320,10 @@ export default function Home() {
               Featured Projects
             </h2>
             <p className="mb-10 text-sm text-slate-500">
-              Hover a channel to read the details.
+              Hover a channel to read the details, or drag one to rearrange.
             </p>
 
-            <div className="grid w-full max-w-6xl grid-cols-1 gap-7 sm:grid-cols-2 lg:grid-cols-3">
-              {projects.map((project) => (
-                <ProjectChannel
-                  key={project.id}
-                  project={project}
-                  onTune={() => playSound('hover')}
-                />
-              ))}
-            </div>
+            <ProjectGrid projects={projects} />
 
             <SectionScroller
               targetId="contact"

@@ -2,7 +2,7 @@
 
 import { useCallback, useRef } from 'react';
 
-export type WiiSound = 'hover' | 'select' | 'section' | 'home';
+export type WiiSound = 'hover' | 'select' | 'section' | 'home' | 'vacant';
 
 const SOURCES: Record<WiiSound, string> = {
   /** Pointing at a channel. */
@@ -13,6 +13,8 @@ const SOURCES: Record<WiiSound, string> = {
   section: '/sfx-section.mp3',
   /** Returning to the Wii Menu. */
   home: '/sfx-home.mp3',
+  /** Carrying a held channel over an empty slot. */
+  vacant: '/sfx-vacant.wav',
 };
 
 const DEFAULT_VOLUME: Record<WiiSound, number> = {
@@ -20,6 +22,7 @@ const DEFAULT_VOLUME: Record<WiiSound, number> = {
   select: 0.4,
   section: 0.5,
   home: 0.5,
+  vacant: 0.35,
 };
 
 export function useWiiSounds() {
