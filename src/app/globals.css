@@ -1,6 +1,5 @@
 @import "tailwindcss";
 
-
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
@@ -8,21 +7,66 @@
   --font-mono: var(--font-geist-mono);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #000000;
-    --foreground: #ffffff;
-  }
+:root {
+  --background: #000000;
+  --foreground: #ffffff;
+
+  /* Wii Menu palette */
+  --wii-blue: #00a0e9;
+  --wii-blue-deep: #0072b8;
+  --wii-blue-glow: rgba(75, 190, 255, 0.75);
+  --wii-silver-light: #f6f8fa;
+  --wii-silver: #dfe3ea;
+  --wii-silver-dark: #b6bdc9;
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
-  cursor: none; /* Hide the default system cursor */
 }
 
-/* Fade-in animation */
+/* The Wii hand as a real cursor. Drawn by the compositor at no cost, unlike a
+   JS-positioned element that repaints on every pointer move.
+   The picker swaps players by setting data-cursor on <html>. */
+:root {
+  --wii-cursor: url('/wii-pointer-p1.png') 25 6;
+}
+
+html[data-cursor='2'] {
+  --wii-cursor: url('/wii-pointer-p2.png') 25 6;
+}
+
+html[data-cursor='3'] {
+  --wii-cursor: url('/wii-pointer-p3.png') 25 6;
+}
+
+html[data-cursor='4'] {
+  --wii-cursor: url('/wii-pointer-p4.png') 25 6;
+}
+
+@media (pointer: fine) {
+  body,
+  body * {
+    cursor: var(--wii-cursor), auto;
+  }
+}
+
+/* ─────────────────────────────────────────────
+   Section headings — the Wii Menu's embossed blue
+   ───────────────────────────────────────────── */
+.wii-heading {
+  color: #1668ab;
+  text-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.95),
+    0 2px 4px rgba(25, 60, 110, 0.16);
+}
+
+.wii-subheading {
+  color: #2f8fd0;
+  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.9);
+}
+
 @keyframes fadeIn {
   from {
     opacity: 0;
@@ -38,155 +82,648 @@ body {
   animation: fadeIn 1s ease-out forwards;
 }
 
-/* Optimized Aero Styles - Reduced backdrop-filter usage */
-.aero-glass {
-  background: rgba(255, 255, 255, 0.1);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+/* Slow breath from near-black up to full white, like a Wii standby light */
+@keyframes wiiGlowPulse {
+  0%,
+  100% {
+    opacity: 0.12;
+  }
+  50% {
+    opacity: 1;
+  }
 }
 
-.aero-card {
-  background: rgba(255, 255, 255, 0.9);
-  border: 1px solid rgba(255, 255, 255, 0.3);
-  border-radius: 12px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-  position: relative;
-  overflow: hidden;
+.animate-glow-pulse {
+  animation: wiiGlowPulse 3.2s ease-in-out infinite;
 }
 
-.aero-card::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 50%;
-  background: linear-gradient(
-    135deg,
-    rgba(255, 255, 255, 0.4) 0%,
-    transparent 100%
-  );
-  border-radius: 12px 12px 0 0;
-  pointer-events: none;
-  z-index: 1;
+.animate-glow-pulse:hover {
+  animation: none;
+  opacity: 1;
 }
 
-.aero-button {
-  background: rgba(255, 255, 255, 0.8);
-  border: 1px solid rgba(255, 255, 255, 0.3);
-  border-radius: 8px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  transition: all 0.2s ease;
+@media (prefers-reduced-motion: reduce) {
+  .animate-glow-pulse {
+    animation: none;
+    opacity: 0.7;
+  }
 }
 
-.aero-button:hover {
-  background: rgba(255, 255, 255, 0.9);
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
-  transform: translateY(-1px);
-}
+/* ─────────────────────────────────────────────
+   Wii Menu backdrop
+   Cool silver-grey with a soft overhead sheen,
+   matching the console's channel grid screen.
 
-.aero-navbar {
-  background: rgba(255, 255, 255, 0.15);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-}
-
-.aero-section {
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-}
-
-/* Simplified CRT Effects - Reduced complexity */
-.crt-scanlines-page {
+   Pinned to the viewport rather than painted across the full page height,
+   so scrolling never re-rasterises a multi-thousand-pixel gradient.
+   ───────────────────────────────────────────── */
+.wii-menu-bg {
   position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(
-    to bottom,
-    transparent 50%,
-    rgba(0, 0, 0, 0.05) 50%
-  );
-  background-size: 100% 4px;
-  pointer-events: none;
-  z-index: 9998;
-}
-
-.crt-curvature {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: radial-gradient(
-    circle at center,
-    transparent 0%,
-    rgba(0, 0, 0, 0.1) 100%
-  );
-  pointer-events: none;
-  z-index: 9997;
-}
-
-.crt-vignette {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: radial-gradient(
-    circle at center,
-    transparent 0%,
-    rgba(0, 0, 0, 0.1) 100%
-  );
-  pointer-events: none;
-  z-index: 9996;
-}
-
-/* Simplified CRT TV Effects */
-.crt-tv {
-  position: relative;
-  transform: perspective(1000px) rotateX(5deg);
-  box-shadow: 0 0 20px rgba(0, 0, 0, 0.8);
-}
-
-.crt-tv::before {
-  content: '';
-  position: absolute;
-  top: -2px;
-  left: -2px;
-  right: -2px;
-  bottom: -2px;
-  background: #333;
-  border-radius: 24px;
+  inset: 0;
   z-index: -1;
+  background-color: var(--wii-silver);
+  background-image:
+    radial-gradient(
+      130% 80% at 50% -10%,
+      rgba(255, 255, 255, 0.95) 0%,
+      rgba(255, 255, 255, 0) 55%
+    ),
+    linear-gradient(
+      180deg,
+      #f2f4f8 0%,
+      #e3e7ee 38%,
+      #d2d8e1 72%,
+      #bfc6d2 100%
+    );
+  transform: translateZ(0);
 }
 
-.crt-screen {
-  position: relative;
-  border: 2px solid #444;
-  box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.8);
-}
-
-/* Simplified Static Effect */
-.crt-static {
-  background-image: 
-    radial-gradient(circle at 25% 25%, white 1px, transparent 1px);
-  background-size: 4px 4px;
-}
-
-/* Simplified Scanlines Effect */
-.crt-scanlines {
+.wii-section-tint {
   background: linear-gradient(
-    to bottom,
-    transparent 50%,
-    rgba(0, 255, 0, 0.05) 50%
+    180deg,
+    rgba(255, 255, 255, 0.55) 0%,
+    rgba(255, 255, 255, 0.15) 100%
   );
-  background-size: 100% 4px;
 }
 
-/* Simplified CRT TV Hover Effects */
-.crt-tv:hover {
-  transform: perspective(1000px) rotateX(5deg) scale(1.02);
-  box-shadow: 0 0 30px rgba(0, 0, 0, 0.9);
+/* Sections are viewport-sized, so skipping the off-screen ones keeps
+   scrolling cheap on engines that rasterise eagerly (Gecko especially). */
+.wii-section {
+  content-visibility: auto;
+  contain-intrinsic-size: auto 88vh;
+}
+
+/* ─────────────────────────────────────────────
+   Wii Channel — the silver TV pane
+   ───────────────────────────────────────────── */
+.wii-channel {
+  --wii-radius: 1.5rem;
+  --wii-bezel: 6px;
+  position: relative;
+  display: block;
+  width: 100%;
+  height: 100%;
+  padding: var(--wii-bezel);
+  border: none;
+  border-radius: var(--wii-radius);
+  background: linear-gradient(
+    170deg,
+    #ffffff 0%,
+    #eef1f5 22%,
+    #d5dae2 62%,
+    #aeb6c3 100%
+  );
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.95) inset,
+    0 0 0 1px rgba(255, 255, 255, 0.5),
+    0 4px 10px rgba(30, 50, 90, 0.16);
+  text-align: left;
+  transition: transform 0.25s ease;
+  isolation: isolate;
+}
+
+.wii-channel__bezel {
+  pointer-events: none;
+  position: absolute;
+  inset: 2px;
+  border-radius: calc(var(--wii-radius) - 2px);
+  box-shadow:
+    0 0 0 1px rgba(255, 255, 255, 0.7),
+    0 0 0 2px rgba(120, 130, 150, 0.28),
+    inset 0 0 0 1px rgba(190, 205, 225, 0.5);
+  z-index: 3;
+}
+
+.wii-channel__screen {
+  position: relative;
+  z-index: 1;
+  height: 100%;
+  border-radius: calc(var(--wii-radius) - var(--wii-bezel));
+  overflow: hidden;
+  background: #0c0e14;
+  box-shadow: inset 0 0 18px rgba(0, 0, 0, 0.45);
+}
+
+/* Interactive channels lift and pick up the Wii's blue halo.
+   The halo lives on a pseudo-element so hovering only toggles opacity
+   instead of repainting a multi-layer box-shadow. */
+.wii-channel--interactive {
+  cursor: pointer;
+}
+
+@media (pointer: fine) {
+  .wii-channel--interactive,
+  .wii-scroller {
+    cursor: var(--wii-cursor), pointer;
+  }
+}
+
+.wii-channel--interactive::after {
+  content: '';
+  position: absolute;
+  inset: -3px;
+  z-index: -1;
+  border-radius: calc(var(--wii-radius) + 3px);
+  box-shadow:
+    0 0 0 3px var(--wii-blue-glow),
+    0 10px 20px rgba(20, 60, 120, 0.26);
+  opacity: 0;
+  transition: opacity 0.22s ease;
+  pointer-events: none;
+}
+
+.wii-channel--interactive:hover,
+.wii-channel--interactive:focus-visible {
+  transform: translateY(-4px) scale(1.02);
+  outline: none;
+}
+
+.wii-channel--interactive:hover::after,
+.wii-channel--interactive:focus-visible::after {
+  opacity: 1;
+}
+
+/* Channel art screen — the banner area of a Wii channel.
+   Neutral silver-white, the same finish the console gives its own channels. */
+.wii-channel__screen--art {
+  background: linear-gradient(
+    180deg,
+    #ffffff 0%,
+    #f5f7fa 48%,
+    #e4e8ef 100%
+  );
+}
+
+/* Silver name plate along the bottom of a channel */
+.wii-channel__label {
+  padding: 0.45rem 0.6rem;
+  text-align: center;
+  font-size: 0.75rem;
+  font-weight: 700;
+  line-height: 1.15;
+  color: #3f4c66;
+  background: linear-gradient(180deg, #f7f9fc 0%, #dfe5ee 100%);
+  border-top: 1px solid rgba(255, 255, 255, 0.9);
+  box-shadow: 0 -1px 4px rgba(30, 50, 90, 0.12);
+}
+
+.wii-tag {
+  padding: 0.1rem 0.45rem;
+  border-radius: 9999px;
+  font-family: var(--font-mono), monospace;
+  font-size: 10px;
+  color: #33507a;
+  background: rgba(150, 190, 235, 0.28);
+  box-shadow: inset 0 0 0 1px rgba(120, 165, 215, 0.45);
+}
+
+/* Vacant grid slots. On the real console these are quiet recessed panels
+   that sit just below the menu background, with no bezel or artwork. */
+.wii-channel--empty {
+  background: linear-gradient(180deg, #dfe4ec 0%, #cdd4de 100%);
+  box-shadow:
+    0 0 0 1px rgba(255, 255, 255, 0.5),
+    inset 0 2px 6px rgba(40, 55, 85, 0.16);
+}
+
+.wii-channel--empty .wii-channel__bezel {
+  box-shadow: none;
+}
+
+.wii-channel--empty .wii-channel__screen {
+  background: linear-gradient(180deg, #c8cfda 0%, #b9c1ce 100%);
+  box-shadow: inset 0 2px 7px rgba(45, 60, 90, 0.26);
+}
+
+/* Light screen variant for text-heavy channels */
+.wii-channel__screen--light {
+  background: linear-gradient(
+    180deg,
+    #ffffff 0%,
+    #f4f7fb 55%,
+    #e8eef6 100%
+  );
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.9),
+    inset 0 -8px 18px rgba(140, 165, 200, 0.18);
+}
+
+.wii-channel__screen--padded {
+  padding: 1.25rem;
+}
+
+/* ─────────────────────────────────────────────
+   Channel dragging — rearranging the menu grid
+   ───────────────────────────────────────────── */
+.wii-slot {
+  transition:
+    opacity 0.18s ease,
+    transform 0.18s ease;
+}
+
+.wii-slot--dragging {
+  opacity: 0.35;
+  transform: scale(0.96);
+}
+
+/* Marks the slot the channel would land in. */
+.wii-slot--over {
+  outline: 3px dashed var(--wii-blue);
+  outline-offset: 5px;
+  border-radius: 1.7rem;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .wii-slot {
+    transition: none;
+  }
+}
+
+/* ─────────────────────────────────────────────
+   Channel flip — hover to tune to the back face
+   ───────────────────────────────────────────── */
+.wii-flip {
+  perspective: 1400px;
+}
+
+.wii-flip__inner {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  transform-style: preserve-3d;
+  transition: transform 0.6s cubic-bezier(0.22, 0.68, 0.28, 1);
+}
+
+/* The only focusable control lives on the back, so focus flips the channel too */
+.wii-flip:hover .wii-flip__inner,
+.wii-flip:focus-within .wii-flip__inner {
+  transform: rotateY(180deg);
+}
+
+/* Touch devices have no hover, so tapping tunes the channel instead */
+@media (hover: none) {
+  .wii-flip.is-flipped .wii-flip__inner {
+    transform: rotateY(180deg);
+  }
+}
+
+.wii-flip__face {
+  position: absolute;
+  inset: 0;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+
+.wii-flip__face--back {
+  transform: rotateY(180deg);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .wii-flip__inner {
+    transition-duration: 0.01ms;
+  }
+}
+
+/* ─────────────────────────────────────────────
+   Wii bottom bar — orb, clock, message button
+   ───────────────────────────────────────────── */
+.wii-bar {
+  background: linear-gradient(
+    180deg,
+    #fbfcfd 0%,
+    #e7ebf1 42%,
+    #cdd4de 100%
+  );
+  border-top: 1px solid rgba(255, 255, 255, 0.95);
+  box-shadow:
+    0 -1px 0 rgba(255, 255, 255, 0.8) inset,
+    0 -3px 10px rgba(25, 45, 85, 0.16);
+  transform: translateZ(0);
+}
+
+.wii-orb {
+  position: relative;
+  border-radius: 9999px;
+  background: radial-gradient(
+    circle at 50% 28%,
+    #b6e8ff 0%,
+    #4fc3f7 32%,
+    var(--wii-blue) 62%,
+    var(--wii-blue-deep) 100%
+  );
+  box-shadow:
+    inset 0 2px 5px rgba(255, 255, 255, 0.85),
+    inset 0 -3px 8px rgba(0, 60, 110, 0.5),
+    0 3px 10px rgba(0, 80, 140, 0.4);
+  color: #ffffff;
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.wii-orb:hover,
+.wii-orb:focus-visible {
+  transform: translateY(-2px) scale(1.06);
+  box-shadow:
+    inset 0 2px 5px rgba(255, 255, 255, 0.9),
+    inset 0 -3px 8px rgba(0, 60, 110, 0.45),
+    0 0 0 3px var(--wii-blue-glow),
+    0 6px 16px rgba(0, 80, 140, 0.45);
+  outline: none;
+}
+
+.wii-orb--grey {
+  background: radial-gradient(
+    circle at 50% 28%,
+    #ffffff 0%,
+    #e2e7ee 34%,
+    #b9c1cd 68%,
+    #8e97a5 100%
+  );
+  color: #43506a;
+  box-shadow:
+    inset 0 2px 5px rgba(255, 255, 255, 0.95),
+    inset 0 -3px 8px rgba(60, 75, 100, 0.35),
+    0 3px 10px rgba(40, 60, 95, 0.3);
+}
+
+/* Rounded blue pill, the Wii's standard action button */
+.wii-pill {
+  border-radius: 9999px;
+  background: linear-gradient(
+    180deg,
+    #7fd3ff 0%,
+    #22a7ea 45%,
+    #0d80c4 100%
+  );
+  color: #ffffff;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.85),
+    inset 0 -2px 6px rgba(0, 60, 110, 0.4),
+    0 2px 6px rgba(0, 80, 140, 0.3);
+  transition:
+    transform 0.18s ease,
+    box-shadow 0.18s ease;
+}
+
+.wii-pill:hover,
+.wii-pill:focus-visible {
+  transform: translateY(-1px);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.9),
+    inset 0 -2px 6px rgba(0, 60, 110, 0.35),
+    0 0 0 3px var(--wii-blue-glow),
+    0 5px 12px rgba(0, 80, 140, 0.35);
+  outline: none;
+}
+
+.wii-clock {
+  color: #4a5670;
+  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.9);
+  font-variant-numeric: tabular-nums;
+}
+
+/* ─────────────────────────────────────────────
+   Page scroller — the Wii Menu's ringed button
+   and blue page arrow, turned to face downward
+   ───────────────────────────────────────────── */
+.wii-scroller {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.35rem;
+  background: none;
+  border: none;
+  transition: transform 0.2s ease;
+}
+
+.wii-scroller:hover,
+.wii-scroller:focus-visible {
+  transform: translateY(3px);
+  outline: none;
+}
+
+.wii-scroller__orb {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 3.25rem;
+  height: 3.25rem;
+  border-radius: 9999px;
+  background: radial-gradient(circle at 50% 32%, #ffffff 0%, #f1f4f8 46%, #dbe1e9 100%);
+  box-shadow:
+    0 0 0 3px #29b6f6,
+    inset 0 2px 4px rgba(255, 255, 255, 0.95),
+    inset 0 -3px 7px rgba(90, 105, 130, 0.28),
+    0 3px 9px rgba(30, 60, 110, 0.22);
+  color: #8b95a5;
+  transition: box-shadow 0.2s ease;
+}
+
+.wii-scroller:hover .wii-scroller__orb,
+.wii-scroller:focus-visible .wii-scroller__orb {
+  box-shadow:
+    0 0 0 3px #29b6f6,
+    0 0 14px 3px var(--wii-blue-glow),
+    inset 0 2px 4px rgba(255, 255, 255, 0.95),
+    inset 0 -3px 7px rgba(90, 105, 130, 0.24),
+    0 4px 12px rgba(30, 60, 110, 0.26);
+}
+
+.wii-scroller__arrow {
+  color: #29b6f6;
+  transition: transform 0.2s ease;
+}
+
+.wii-scroller:hover .wii-scroller__arrow {
+  transform: translateY(2px);
+}
+
+.wii-scroller__hint {
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  color: #7d879a;
+}
+
+/* Wii-style popover label, the bubble the console shows above a button */
+.wii-tip-anchor {
+  position: relative;
+  display: inline-flex;
+}
+
+.wii-tip {
+  position: absolute;
+  bottom: calc(100% + 12px);
+  left: 50%;
+  z-index: 60;
+  transform: translateX(-50%) translateY(5px);
+  padding: 0.3rem 0.85rem;
+  border-radius: 9999px;
+  white-space: nowrap;
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: #3f4c66;
+  background: linear-gradient(180deg, #ffffff 0%, #e9eef6 100%);
+  box-shadow:
+    0 0 0 1px rgba(255, 255, 255, 0.95),
+    0 0 0 2px rgba(120, 140, 170, 0.35),
+    0 4px 10px rgba(25, 45, 85, 0.22);
+  opacity: 0;
+  pointer-events: none;
+  transition:
+    opacity 0.16s ease,
+    transform 0.16s ease;
+}
+
+.wii-tip::after {
+  content: '';
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  width: 10px;
+  height: 10px;
+  transform: translate(-50%, -60%) rotate(45deg);
+  background: #e9eef6;
+  box-shadow: 1.5px 1.5px 0 rgba(120, 140, 170, 0.35);
+}
+
+.wii-tip-anchor:hover .wii-tip,
+.wii-tip-anchor:focus-within .wii-tip,
+.wii-tip-anchor.is-held .wii-tip {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+
+/* ─────────────────────────────────────────────
+   Pointer picker — the Wii's controller settings tray
+   ───────────────────────────────────────────── */
+.wii-tray {
+  position: fixed;
+  top: 50%;
+  right: 0;
+  z-index: 55;
+  display: flex;
+  align-items: center;
+  transform: translateY(-50%);
+}
+
+.wii-tray__handle {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.85rem 0.5rem;
+  border: none;
+  border-radius: 0.9rem 0 0 0.9rem;
+  background: linear-gradient(180deg, #fbfcfd 0%, #e7ebf1 45%, #cdd4de 100%);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.95),
+    0 0 0 1px rgba(120, 140, 170, 0.3),
+    -3px 0 10px rgba(25, 45, 85, 0.18);
+  color: #3f4c66;
+  transition: transform 0.2s ease;
+}
+
+.wii-tray__handle:hover,
+.wii-tray__handle:focus-visible {
+  transform: translateX(-2px);
+  outline: none;
+}
+
+.wii-tray__handle-label {
+  font-size: 0.6rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  writing-mode: vertical-rl;
+  text-orientation: mixed;
+}
+
+.wii-tray__panel {
+  overflow: hidden;
+  width: 0;
+  opacity: 0;
+  border-radius: 1.1rem 0 0 1.1rem;
+  background: linear-gradient(180deg, #fdfdfe 0%, #eef1f6 40%, #dbe1e9 100%);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.95),
+    0 0 0 1px rgba(120, 140, 170, 0.3),
+    -4px 0 16px rgba(25, 45, 85, 0.22);
+  transition:
+    width 0.28s cubic-bezier(0.22, 0.68, 0.28, 1),
+    opacity 0.2s ease;
+}
+
+.wii-tray.is-open .wii-tray__panel {
+  width: 10.5rem;
+  opacity: 1;
+}
+
+.wii-tray__title {
+  padding: 0.7rem 0.75rem 0.5rem;
+  text-align: center;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: #5b6883;
+}
+
+.wii-tray__list {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0.5rem;
+  padding: 0 0.75rem 0.85rem;
+}
+
+.wii-tray__option {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.2rem;
+  padding: 0.45rem 0.2rem 0.3rem;
+  border: none;
+  border-radius: 0.7rem;
+  background: linear-gradient(180deg, #ffffff 0%, #eef2f7 60%, #dde3ec 100%);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.95),
+    0 0 0 1px rgba(255, 255, 255, 0.6),
+    0 2px 5px rgba(30, 50, 90, 0.16);
+  color: #55627d;
+  font-size: 0.62rem;
+  font-weight: 700;
+  transition:
+    transform 0.18s ease,
+    box-shadow 0.18s ease;
+}
+
+.wii-tray__option:hover,
+.wii-tray__option:focus-visible {
+  transform: translateY(-2px);
+  outline: none;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.95),
+    0 0 0 2px var(--wii-blue-glow),
+    0 4px 9px rgba(30, 60, 110, 0.2);
+}
+
+.wii-tray__option.is-active {
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.95),
+    0 0 0 3px var(--wii-blue),
+    0 4px 9px rgba(30, 60, 110, 0.22);
+  color: #1668ab;
+}
+
+.wii-tray__option img {
+  width: 30px;
+  height: 30px;
+  image-rendering: auto;
+}
+
+/* Touch devices have no cursor to restyle, so the tray is pointless there.
+   Keyed off input type rather than width so a narrow desktop window keeps it. */
+@media (pointer: coarse) {
+  .wii-tray {
+    display: none;
+  }
 }

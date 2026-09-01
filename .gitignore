@@ -39,3 +39,6 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# uncompressed media sources, converted into /public by scripts/optimize-media.mjs
+/media-src

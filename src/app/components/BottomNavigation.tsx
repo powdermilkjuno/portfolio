@@ -1,88 +1,116 @@
 'use client';
-import React from 'react';
-import { HomeIcon } from '@radix-ui/react-icons';
-import { CursorArrowIcon } from '@radix-ui/react-icons';
+
+import { useEffect, useState } from 'react';
+import { useWiiSounds } from '../lib/useWiiSounds';
 
 interface BottomNavigationProps {
   isVisible: boolean;
-  isScrolled: boolean;
 }
 
-const BottomNavigation: React.FC<BottomNavigationProps> = ({ isVisible, isScrolled }) => {
-  const playClickSound = () => {
-    const audio = new Audio('/audio_button-select.mp3');
-    audio.play().catch(error => console.log('Audio play failed:', error));
-  };
+const SECTIONS = [
+  { id: 'about', label: 'About' },
+  { id: 'skills', label: 'Skills' },
+  { id: 'projects', label: 'Projects' },
+  { id: 'contact', label: 'Contact' },
+];
+
+/** Wii Menu bottom bar: Wii orb, section channels, clock, and message button. */
+export default function BottomNavigation({ isVisible }: BottomNavigationProps) {
+  const [now, setNow] = useState<Date | null>(null);
+  const [homeHeld, setHomeHeld] = useState(false);
+  const playSound = useWiiSounds();
+
+  useEffect(() => {
+    setNow(new Date());
+    const timer = setInterval(() => setNow(new Date()), 15_000);
+    return () => clearInterval(timer);
+  }, []);
 
   const scrollToSection = (sectionId: string) => {
-    playClickSound();
-    const element = document.getElementById(sectionId);
-    if (element) {
-      element.scrollIntoView({ behavior: 'smooth' });
-    }
+    setHomeHeld(false);
+    playSound('section');
+    document.getElementById(sectionId)?.scrollIntoView({ behavior: 'smooth' });
   };
 
-  if (!isVisible) {
-    return (
-      <div className="flex flex-row items-center justify-center text-4xl yx-12 animate-[pulse_2s_ease-in-out_infinite] opacity-20 hover:opacity-100">
-        <p className="mr-2">Click</p>
-        <CursorArrowIcon className="h-8 w-8 mx-2 hover:text-gray-400 transition-colors" />
-        <p className="ml-2">anywhere to continue.</p>
-      </div>
-    );
-  }
+  if (!isVisible) return null;
+
+  const time = now
+    ? now.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' })
+    : '';
+  const date = now
+    ? now.toLocaleDateString([], { weekday: 'short', month: 'numeric', day: 'numeric' })
+    : '';
 
   return (
-    <nav className={`fixed right-4 top-1/2 transform -translate-y-1/2 aero-navbar rounded-lg z-50 transition-all duration-300 ${
-      isScrolled ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-full'
-    }`}>
-      <div className="flex flex-col items-center space-y-6 py-6 px-3">
-        <button
-          onClick={() => {
-            playClickSound();
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-          }}
-          className="flex flex-col items-center text-gray-700 hover:text-blue-600 transition-colors duration-200 group"
-          title="Go to top"
-        >
-          <HomeIcon className="h-5 w-5" />
-          <div className="w-0 group-hover:w-full h-0.5 bg-blue-600 transition-all duration-200"></div>
-        </button>
-        
-        <button
-          onClick={() => scrollToSection('about')}
-          className="flex flex-col items-center text-gray-700 hover:text-blue-600 transition-colors duration-200 group"
-        >
-          <span className="text-sm font-medium">About</span>
-          <div className="w-0 group-hover:w-full h-0.5 bg-blue-600 transition-all duration-200"></div>
-        </button>
-        
-        <button
-          onClick={() => scrollToSection('skills')}
-          className="flex flex-col items-center text-gray-700 hover:text-blue-600 transition-colors duration-200 group"
-        >
-          <span className="text-sm font-medium">Skills</span>
-          <div className="w-0 group-hover:w-full h-0.5 bg-blue-600 transition-all duration-200"></div>
-        </button>
-        
-        <button
-          onClick={() => scrollToSection('projects')}
-          className="flex flex-col items-center text-gray-700 hover:text-blue-600 transition-colors duration-200 group"
-        >
-          <span className="text-sm font-medium">Projects</span>
-          <div className="w-0 group-hover:w-full h-0.5 bg-blue-600 transition-all duration-200"></div>
-        </button>
-        
-        <button
-          onClick={() => scrollToSection('contact')}
-          className="flex flex-col items-center text-gray-700 hover:text-blue-600 transition-colors duration-200 group"
-        >
-          <span className="text-sm font-medium">Contact</span>
-          <div className="w-0 group-hover:w-full h-0.5 bg-blue-600 transition-all duration-200"></div>
-        </button>
+    <nav className="wii-bar fixed bottom-0 left-0 right-0 z-50 px-4 py-3">
+      <div className="mx-auto grid max-w-5xl grid-cols-[1fr_auto_1fr] items-center gap-3">
+        <div className={`wii-tip-anchor justify-self-start ${homeHeld ? 'is-held' : ''}`}>
+          <button
+            onClick={() => {
+              playSound('home');
+              setHomeHeld(true);
+              window.scrollTo({ top: 0, behavior: 'smooth' });
+            }}
+            onMouseEnter={() => playSound('hover')}
+            className="wii-orb wii-orb--grey relative flex h-14 w-14 overflow-hidden p-0"
+            aria-label="Home"
+          >
+            <img
+              src="/wii-home.png"
+              alt=""
+              width={56}
+              height={56}
+              draggable={false}
+              className="h-full w-full scale-110 object-cover"
+              aria-hidden="true"
+            />
+          </button>
+          <span className="wii-tip" role="tooltip">
+            Home
+          </span>
+        </div>
+
+        <div className="flex items-center justify-center gap-2">
+          {SECTIONS.map((section) => (
+            <button
+              key={section.id}
+              onClick={() => scrollToSection(section.id)}
+              onMouseEnter={() => playSound('hover')}
+              className="wii-pill px-4 py-1.5 text-sm font-semibold"
+            >
+              {section.label}
+            </button>
+          ))}
+        </div>
+
+        <div className="flex items-center justify-end gap-4">
+          <div className="wii-clock hidden text-right leading-none sm:block">
+            <div className="text-2xl font-semibold" suppressHydrationWarning>
+              {time || '\u00A0'}
+            </div>
+            <div className="mt-1 text-xs opacity-70" suppressHydrationWarning>
+              {date || '\u00A0'}
+            </div>
+          </div>
+
+          <div className="wii-tip-anchor">
+            <button
+              onClick={() => scrollToSection('contact')}
+              onMouseEnter={() => playSound('hover')}
+              className="wii-orb wii-orb--grey flex h-14 w-14 items-center justify-center"
+              aria-label="Message board"
+            >
+              <svg className="h-6 w-6" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
+                <path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z" />
+                <path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z" />
+              </svg>
+            </button>
+            <span className="wii-tip" role="tooltip">
+              Message Board
+            </span>
+          </div>
+        </div>
       </div>
     </nav>
   );
-};
-
-export default BottomNavigation;
+}
